@@ -10,7 +10,7 @@ export default function Header() {
                 <span className='text-slate-500'>Uurban</span>
                 <span className='text-slate-700'>Estate</span>
             </h1>
-            <form className='bg-stae-100 p-3 rounded-lg flex item-center'>
+            <form className='bg-slate-100 p-3 rounded-lg flex item-center justify-center'>
                 <input type='text'className='bg-transparent focus:outline-none w-24 sm:w-64' placeholder='Search...'></input>
                 <FaSearch className='text-slate-600'/>
             </form>

@@ -7,7 +7,6 @@ import authRouter from './routes/auth.route.js';
 
 dotenv.config();
 const app = express();
-
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO).then(
