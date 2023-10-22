@@ -3,6 +3,8 @@ import {useDispatch, useSelector} from 'react-redux'
 import {getDownloadURL, getStorage, ref, uploadBytesResumable} from 'firebase/storage'
 import { app } from '../firebase';
 import {updateUserStart, updateUserSuccess, updateUserFailure} from '../redux/user/userSlice.js';
+import {deleteUserStart, deleteUserSuccess, deleteUserFailure} from '../redux/user/userSlice.js'
+import {signOutUserStart, signOutUserSuccess, signOutUserFailure} from '../redux/user/userSlice.js'
 
 
 export default function Profile() {
@@ -44,6 +46,34 @@ export default function Profile() {
     )
   };
 
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUserStart())
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, 
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
+      );
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      else {
+        dispatch(deleteUserSuccess(data));
+
+      }
+
+    }
+    catch(err) {
+        dispatch(deleteUserFailure(err.message))
+    }
+  }
+
   const onformChange = (e) => {
       setFormData({
         ...formData,
@@ -51,6 +81,22 @@ export default function Profile() {
       })
   }
 
+  const handleSignOut =async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch('/api/auth/signout');
+      const data = await res.json();
+      if (data.success == false) {
+        dispatch(signOutUserFailure(data.message));
+        return ;
+      }
+      dispatch(signOutUserSuccess());
+    }
+    catch(err) {
+      dispatch(signOutUserFailure(err.message));
+    }
+  }
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -64,9 +110,10 @@ export default function Profile() {
           body: JSON.stringify(formData),
         }
       );
-
       const data = await res.json();
+      console.log(data);
       if (data.success === false) {
+        setSuccess(false);
         dispatch(updateUserFailure(data.message));
         return;
       }
@@ -77,9 +124,12 @@ export default function Profile() {
 
     }
     catch(err) {
+      console.log(err);
+      setSuccess(false);
       dispatch(updateUserFailure(err.message));
     }
-  }
+  };
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -106,8 +156,8 @@ export default function Profile() {
         <button disabled={loading} className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'>{loading?'Loading...':'Update'}</button>
       </form>
       <div className='flex justify-between mt-5'>
-        <span className='text-red-600 cursor-pointer font-semibold'>Delete Account</span>
-        <span className='text-red-600 cursor-pointer font-semibold'>Sign Out</span>
+        <span onClick={handleDeleteUser} className='text-red-600 cursor-pointer font-semibold'>Delete Account</span>
+        <span onClick={handleSignOut} className='text-red-600 cursor-pointer font-semibold'>Sign Out</span>
       </div>
       <p className='text-green-700 font-bold my-3'>{updateSuccess?"Updated Successfully!!":''}</p>
       <p className='text-red-800'>{error?error:''}</p>

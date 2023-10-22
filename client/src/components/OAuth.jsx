@@ -19,14 +19,14 @@ export default function OAuth() {
             email: result.user.email,
             photo: result.user.photoURL,
         };
-
         const res = await fetch('/api/auth/google', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify(data),
+            body: JSON.stringify(data)
           });
+        console.log(res);
         const outcome = await res.json();
 
         dispatch(signInSuccess(outcome));
