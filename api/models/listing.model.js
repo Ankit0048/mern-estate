@@ -10,15 +10,15 @@ const listingSchema = new mongoose.Schema(
             type: String,
             required: true,
         }, 
-        adderss: {
+        address: {
             type: String,
             required: true,
         },
-        regualrPrice: {
+        regularPrice: {
             type: Number,
             required: true
         },
-        discoutPrice: {
+        discountPrice: {
             type: Number,
             requrired: true,
         },
