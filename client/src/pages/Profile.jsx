@@ -18,6 +18,7 @@ export default function Profile() {
   const [updateSuccess, setSuccess] = useState(false);
   const [showListingError, setShowListingError] = useState(false);
   const [userListings, setUserListings] = useState([]);
+  const [deleteListingError, setDeleteListingError] = useState(false);
   const dispatch= useDispatch();
   useEffect(() => {
     if (file) {
@@ -149,7 +150,25 @@ export default function Profile() {
       showListingError(err.message);
     }
   } 
+  const handleDeleteListing = async (listingId) => {
+    try {
+      const res = await fetch(`api/listing/delete/${listingId}`, {
+        method: 'DELETE',
+      });
 
+      const data = await res.json();
+
+      if (data.success === false) {
+        setDeleteListingError(data.message);
+        return;
+      }
+
+      setUserListings((prev) => prev.filter((listing) => listing._id !== listingId));
+    }
+    catch(error) {
+      setDeleteListingError(error.message);
+    }
+  }
   return (
     <div className='p-3 max-w-xl mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -195,7 +214,10 @@ export default function Profile() {
 
           {
           userListings.map((listing) => (
-            (<div key={listing._id} className='flex border rounded-lg p-3 items-center justify-between'>
+
+            (
+              <div>
+              <div key={listing._id} className='flex border rounded-lg p-3 items-center justify-between'>
               <Link to={`/listing/${listing._id}`}>
                 <img src={listing.imageUrls[0]} alt="listing cover" className='h-16 w-16 object-contain'/>
               </Link>
@@ -203,10 +225,13 @@ export default function Profile() {
                 <p >{listing.name}</p>
               </Link>
               <div className='flex flex-col gap-2 items-center justify-between'>
-                  <button className='uppercase text-red-600 font-semibold'>Delete</button>
+                  <button onClick={()=>handleDeleteListing(listing._id)}className='uppercase text-red-600 font-semibold'>Delete</button>
                   <button className='uppercase text-blue-600 font-semibold'>Edit</button>
               </div>
-            </div>)
+            </div>
+              <p className='text-red-800 font-semibold'>{deleteListingError?deleteListingError:''}</p>
+            </div>
+            )
           ))}
           </div>
           
