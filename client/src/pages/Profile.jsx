@@ -226,7 +226,9 @@ export default function Profile() {
               </Link>
               <div className='flex flex-col gap-2 items-center justify-between'>
                   <button onClick={()=>handleDeleteListing(listing._id)}className='uppercase text-red-600 font-semibold'>Delete</button>
-                  <button className='uppercase text-blue-600 font-semibold'>Edit</button>
+                  <Link to={`/update-listing/${listing._id}`}>
+                    <button className='uppercase text-blue-600 font-semibold'>Edit</button>
+                  </Link>
               </div>
             </div>
               <p className='text-red-800 font-semibold'>{deleteListingError?deleteListingError:''}</p>
